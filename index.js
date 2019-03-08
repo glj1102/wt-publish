@@ -45,7 +45,7 @@ conf.delete("config");
         ? conf.delete(program.clear)
         : conf.clear();
     } else if (!program.args.length || program.sdk) {
-      await publish(await getConfig(program.sdk || ""));
+      await publish(await getConfig(program.sdk || null));
     }
   } catch (err) {
     throw err;
@@ -113,8 +113,8 @@ async function publish(currentConfig) {
   console.log(chalk.green("done!"));
 }
 
-async function getConfig(sdkName = "") {
-  let currentConfig = conf.get(sdkName || null);
+async function getConfig(sdkName = null) {
+  let currentConfig = conf.get(sdkName);
   const configKeys = Object.keys(currentConfig);
   if (!sdkName) {
     if (configKeys.length === 1) {
