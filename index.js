@@ -13,7 +13,10 @@ const exec = util.promisify(require("child_process").exec);
 const CLI = require("clui"),
   Spinner = CLI.Spinner;
 
-if (!pkg) return;
+if (!pkg) {
+  console.error(chalk.red("Invalid directory"));
+  return;
+}
 
 const conf = new Configstore(pkg.name, null, {
   configPath: process.cwd() + "/publish.json"
@@ -66,8 +69,21 @@ async function publish(currentConfig) {
     "⣷"
   ]);
   try {
-    const { stdout } = await exec(currentConfig.script);
-    console.log(stdout);
+    const isExists = await await fs_extra.pathExists(
+      `${process.cwd()}/${currentConfig.source}/package.json`
+    );
+    if (!isExists) {
+      const { stdout } = await exec(currentConfig.script);
+      console.log(stdout);
+    }
+  } catch (err) {
+    console.log(err.cmd);
+    console.log(err.stdout);
+    console.error(chalk.red(err.stderr));
+    throw err;
+  }
+
+  try {
     const git = await simpleGit(`${process.cwd()}/${currentConfig.source}`);
     await git.init();
     await git.addRemote(
