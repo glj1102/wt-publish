@@ -75,6 +75,8 @@ async function publish(currentConfig) {
     if (!isExists) {
       const { stdout } = await exec(currentConfig.script);
       console.log(stdout);
+    } else {
+      await fs_extra.remove(`${process.cwd()}/${currentConfig.source}/.git`);
     }
   } catch (err) {
     console.log(err.cmd);
